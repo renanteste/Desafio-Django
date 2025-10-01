@@ -15,26 +15,50 @@ Sistema para cadastro de compras de dólares e cálculo de custo médio da carte
 - MySQL
 - Python 3.11
 - Bootstrap 5
+# Desafio Django - Sistema de Câmbio
 
-## Configuração
-1. Clone o repositório
-2. Crie um ambiente virtual: `python -m venv venv`
-3. Ative o ambiente: `.\venv\Scripts\activate`
-4. Instale dependências: `pip install django mysqlclient requests python-dateutil`
-5. Configure o banco MySQL no `settings.py`
-6. Execute: `python manage.py runserver`
+## Instalação Rápida
 
-## Estrutura do Banco
-```sql
-CREATE DATABASE CambioMoeda;
-USE CambioMoeda;
+1. **Clone o repositório**
+```bash
+git clone https://github.com/renanteste/Desafio-Django.git
+cd Desafio-Django
+Configure o ambiente Python
 
-CREATE TABLE Compra (
-    ID INT AUTO_INCREMENT PRIMARY KEY,
-    data_compra DATE NOT NULL,
-    quantidade_usd DECIMAL(15,2) NOT NULL,
-    cotacao_usd_brl DECIMAL(10,4) NOT NULL,
-    valor_total_brl DECIMAL(15,2) NOT NULL,
-    datahora_cotacao DATETIME NOT NULL,
-    criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
+bash
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+# OU
+venv\Scripts\activate     # Windows
+Instale as dependências
+
+bash
+pip install -r requirements.txt
+Configure as variáveis de ambiente (opcional)
+
+bash
+# No Windows (PowerShell)
+$env:DB_NAME = "CambioMoeda"
+$env:DB_USER = "seu_usuario"
+$env:DB_PASSWORD = "sua_senha"
+$env:DB_HOST = "localhost"
+
+# No Linux/Mac
+export DB_NAME="CambioMoeda"
+export DB_USER="seu_usuario"
+export DB_PASSWORD="sua_senha"
+export DB_HOST="localhost"
+Execute o servidor
+
+bash
+python manage.py runserver
+Acesse: http://localhost:8000
+
+text
+
+## 6. Commitar essas mudanças finais
+
+```bash
+PS C:\Users\gpnet\Documents\Desafio-django\cambiodolar> git add .
+PS C:\Users\gpnet\Documents\Desafio-django\cambiodolar> git commit -m "feat: add deployment setup files"
+PS C:\Users\gpnet\Documents\Desafio-django\cambiodolar> git push origin main
