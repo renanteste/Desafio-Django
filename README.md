@@ -17,6 +17,12 @@ Sistema para cadastro de compras de dólares e cálculo de custo médio da carte
 - Bootstrap 5
 # Desafio Django - Sistema de Câmbio
 
+## Deploy no SQL Server
+
+1. **Use a branch sqlserver-deploy**
+```bash
+git checkout sqlserver-deploy
+
 ## Instalação Rápida
 
 1. **Clone o repositório**

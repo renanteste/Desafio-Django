@@ -3,11 +3,12 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.environ.get('SECRET_KEY', 'sua-chave-secreta-local-aqui')  # Em produção, use variáveis de ambiente
-
+SECRET_KEY = os.environ.get('SECRET_KEY', 'sua-chave-secreta-local-aqui')
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+ALLOWED_HOSTS = ['*']
 
-ALLOWED_HOSTS = []
+# Configuração do Banco de Dados - Suporta MySQL e SQL Server
+DB_ENGINE = os.environ.get('DB_ENGINE', 'mysql')  # 'mysql' ou 'sqlserver'
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -47,19 +48,36 @@ TEMPLATES = [
     },
 ]
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('DB_NAME', 'CambioMoeda'),
-        'USER': os.environ.get('DB_USER', 'root'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', '@Foursys2022'),
-        'HOST': os.environ.get('DB_HOST', 'localhost'),
-        'PORT': os.environ.get('DB_PORT', '3306'),
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
+if DB_ENGINE == 'sqlserver':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'sql_server.pyodbc',
+            'NAME': os.environ.get('DB_NAME', 'CambioMoeda'),
+            'USER': os.environ.get('DB_USER', 'sa'),
+            'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+            'HOST': os.environ.get('DB_HOST', 'VMEXAME2A\\SQLEXPRESS'),
+            'PORT': os.environ.get('DB_PORT', ''),
+            'OPTIONS': {
+                'driver': 'ODBC Driver 17 for SQL Server',
+                'unicode_results': True,
+            },
+        }
     }
-}
+else:  # MySQL (default)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': os.environ.get('DB_NAME', 'CambioMoeda'),
+            'USER': os.environ.get('DB_USER', 'root'),
+            'PASSWORD': os.environ.get('DB_PASSWORD', '@Foursys2022'),
+            'HOST': os.environ.get('DB_HOST', 'localhost'),
+            'PORT': os.environ.get('DB_PORT', '3306'),
+            'OPTIONS': {
+                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            },
+        }
+    }
+
 
 LANGUAGE_CODE = 'pt-br'
 TIME_ZONE = 'America/Sao_Paulo'

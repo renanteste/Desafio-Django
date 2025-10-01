@@ -7,7 +7,7 @@ class Compra(models.Model):
     cotacao_usd_brl = models.DecimalField(max_digits=10, decimal_places=4)
     valor_total_brl = models.DecimalField(max_digits=15, decimal_places=2)
     datahora_cotacao = models.DateTimeField()
-    criado_em = models.DateTimeField(auto_now_add=True)
+    criado_em = models.DateTimeField(auto_now_add=True, null=True, blank=True)  # Permitir null para SQL Server
 
     class Meta:
         db_table = 'Compra'
