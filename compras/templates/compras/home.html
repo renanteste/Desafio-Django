@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1>Carteira de Dólares</h1>
+        
+        {% if ultima_cotacao %}
+        <div class="alert alert-info">
+            <strong>Última Cotação:</strong> {{ ultima_cotacao }}
+        </div>
+        {% endif %}
+        
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card text-white bg-success">
+                    <div class="card-body">
+                        <h5 class="card-title">Total em Dólares</h5>
+                        <p class="card-text h3">$ {{ total_usd|floatformat:2 }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-primary">
+                    <div class="card-body">
+                        <h5 class="card-title">Total em Reais</h5>
+                        <p class="card-text h3">R$ {{ total_brl|floatformat:2 }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-warning">
+                    <div class="card-body">
+                        <h5 class="card-title">Custo Médio</h5>
+                        <p class="card-text h3">R$ {{ custo_medio|floatformat:4 }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="d-flex justify-content-between mb-3">
+            <h2>Compras Realizadas</h2>
+            <a href="{% url 'cadastrar_compra' %}" class="btn btn-primary">Nova Compra</a>
+        </div>
+        
+        {% if compras %}
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Data da Compra</th>
+                        <th>Quantidade (USD)</th>
+                        <th>Cotacao (BRL)</th>
+                        <th>Valor Total (BRL)</th>
+                        <th>Data/Hora Cotação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for compra in compras %}
+                    <tr>
+                        <td>{{ compra.data_compra }}</td>
+                        <td>$ {{ compra.quantidade_usd|floatformat:2 }}</td>
+                        <td>R$ {{ compra.cotacao_usd_brl|floatformat:4 }}</td>
+                        <td>R$ {{ compra.valor_total_brl|floatformat:2 }}</td>
+                        <td>{{ compra.datahora_cotacao }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-warning">
+            Nenhuma compra cadastrada ainda.
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
