@@ -1,51 +1,64 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <h1>Cadastrar Nova Compra</h1>
-        
-        <form method="post">
-            {% csrf_token %}
-            
-            {% if form.non_field_errors %}
-            <div class="alert alert-danger">
-                {% for error in form.non_field_errors %}
-                {{ error }}
-                {% endfor %}
-            </div>
-            {% endif %}
-            
-            <div class="mb-3">
-                <label for="{{ form.data_compra.id_for_label }}" class="form-label">Data da Compra</label>
-                {{ form.data_compra }}
-                {% if form.data_compra.errors %}
-                <div class="text-danger">
-                    {% for error in form.data_compra.errors %}
-                    {{ error }}
-                    {% endfor %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Nova Compra de Dólares</h4>
                 </div>
-                {% endif %}
-                <div class="form-text">A data deve ser um dia útil anterior ao dia atual.</div>
-            </div>
-            
-            <div class="mb-3">
-                <label for="{{ form.quantidade_usd.id_for_label }}" class="form-label">Quantidade de Dólares</label>
-                {{ form.quantidade_usd }}
-                {% if form.quantidade_usd.errors %}
-                <div class="text-danger">
-                    {% for error in form.quantidade_usd.errors %}
-                    {{ error }}
-                    {% endfor %}
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                            {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.data_compra.id_for_label }}" class="form-label">
+                                <strong>Selecionar Data</strong>
+                            </label>
+                            {{ form.data_compra }}
+                            {% if form.data_compra.errors %}
+                            <div class="text-danger small mt-1">
+                                {% for error in form.data_compra.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            <div class="form-text">A data deve ser um dia útil anterior ao dia atual.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.quantidade_usd.id_for_label }}" class="form-label">
+                                <strong>Quantidade de Dólares</strong>
+                            </label>
+                            {{ form.quantidade_usd }}
+                            {% if form.quantidade_usd.errors %}
+                            <div class="text-danger small mt-1">
+                                {% for error in form.quantidade_usd.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                Comprar
+                            </button>
+                            <a href="{% url 'home' %}" class="btn btn-secondary">Cancelar</a>
+                        </div>
+                    </form>
                 </div>
-                {% endif %}
             </div>
-            
-            <div class="d-grid gap-2">
-                <button type="submit" class="btn btn-primary">Cadastrar Compra</button>
-                <a href="{% url 'home' %}" class="btn btn-secondary">Cancelar</a>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 {% endblock %}

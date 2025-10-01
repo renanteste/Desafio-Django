@@ -19,7 +19,7 @@ def home(request):
     if total_usd > 0:
         custo_medio = total_brl / total_usd
     
-    # Última cotação
+    # Última cotação - pega da compra mais recente
     ultima_cotacao = None
     if compras.exists():
         ultima_compra = compras.first()
