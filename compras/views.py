@@ -1,6 +1,7 @@
 # compras/views.py
 from django.shortcuts import render, redirect
 from django.db.models import Sum
+from django.http import JsonResponse
 from datetime import datetime
 from .forms import CompraForm
 from .models import Compra
@@ -38,6 +39,43 @@ def home(request):
 
 def cadastrar_compra(request):
     if request.method == 'POST':
+        # Verificar se é uma requisição AJAX para buscar cotação
+        if 'ajax_cotacao' in request.POST:
+            try:
+                data_compra_str = request.POST.get('data_compra')
+                data_compra = datetime.strptime(data_compra_str, '%Y-%m-%d').date()
+                
+                # Validar se a data é válida (pelo menos 2 dias antes de hoje)
+                hoje = date.today()
+                data_minima = hoje - timedelta(days=2)
+                if data_compra > data_minima:
+                    return JsonResponse({
+                        'error': 'A data da compra deve ser pelo menos 2 dias antes da data atual (D-1).'
+                    }, status=400)
+                
+                bcb_service = BCBService()
+                cotacao_data = bcb_service.get_dollar_quote(data_compra)
+                
+                if cotacao_data:
+                    return JsonResponse({
+                        'cotacao': float(cotacao_data['cotacaoCompra']),
+                        'data_cotacao': cotacao_data['dataHoraCotacao']
+                    })
+                else:
+                    return JsonResponse({
+                        'error': 'Não foi possível obter a cotação para esta data. Verifique se é um dia útil.'
+                    }, status=400)
+                    
+            except ValueError as e:
+                return JsonResponse({
+                    'error': 'Data inválida. Use o formato correto.'
+                }, status=400)
+            except Exception as e:
+                return JsonResponse({
+                    'error': f'Erro interno: {str(e)}'
+                }, status=500)
+        
+        # Processamento normal do formulário de compra
         form = CompraForm(request.POST)
         if form.is_valid():
             data_compra = form.cleaned_data['data_compra']
@@ -67,7 +105,8 @@ def cadastrar_compra(request):
     else:
         form = CompraForm()
     
-    max_date = date.today() - timedelta(days=1)
+    # Data máxima para o formulário (não é mais usada no HTML atual, mas mantida por compatibilidade)
+    max_date = date.today() - timedelta(days=2)
     return render(request, 'compras/cadastrar_compra.html', {
         'form': form,
         'max_date': max_date.isoformat()

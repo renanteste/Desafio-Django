@@ -27,9 +27,13 @@ class BCBService:
     
     def get_dollar_quote(self, date):
         try:
-            # Encontra o dia útil anterior
+            # Encontra o dia útil anterior à data informada
             business_day = self.get_previous_business_day(date)
             formatted_date = self.format_date_for_api(business_day)
+            
+            print(f"🔍 Buscando cotação para: {date}")
+            print(f"📅 Dia útil anterior: {business_day}")
+            print(f"🌐 Data na API: {formatted_date}")
             
             url = f"{self.BASE_URL}/CotacaoDolarDia(dataCotacao=@dataCotacao)"
             params = {
