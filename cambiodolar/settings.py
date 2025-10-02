@@ -51,18 +51,18 @@ TEMPLATES = [
 if DB_ENGINE == 'sqlserver':
     DATABASES = {
         'default': {
-            'ENGINE': 'sql_server.pyodbc',
+            'ENGINE': 'mssql',
             'NAME': os.environ.get('DB_NAME', 'CambioMoeda'),
-            'USER': os.environ.get('DB_USER', 'sa'),
-            'PASSWORD': os.environ.get('DB_PASSWORD', ''),
-            'HOST': os.environ.get('DB_HOST', 'VMEXAME2A\\SQLEXPRESS'),
+            'USER': os.environ.get('DB_USER', 'candidato'),
+            'PASSWORD': os.environ.get('DB_PASSWORD', 'candidato123'),
+            'HOST': os.environ.get('DB_HOST', 'VMEXAME24\\SQLEXPRESS'),
             'PORT': os.environ.get('DB_PORT', ''),
             'OPTIONS': {
                 'driver': 'ODBC Driver 17 for SQL Server',
-                'unicode_results': True,
             },
         }
     }
+        
 else:  # MySQL (default)
     DATABASES = {
         'default': {

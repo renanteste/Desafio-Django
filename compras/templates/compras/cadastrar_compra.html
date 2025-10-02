@@ -9,7 +9,7 @@
                     <h4 class="mb-0">Nova Compra de Dólares</h4>
                 </div>
                 <div class="card-body">
-                    <form method="post">
+                    <form method="post" id="compraForm">
                         {% csrf_token %}
                         
                         {% if form.non_field_errors %}
@@ -21,10 +21,22 @@
                         {% endif %}
                         
                         <div class="mb-3">
-                            <label for="{{ form.data_compra.id_for_label }}" class="form-label">
-                                <strong>Selecionar Data</strong>
+                            <label for="data_compra_input" class="form-label">
+                                <strong>Selecionar Data (dd/mm/aaaa)</strong>
                             </label>
-                            {{ form.data_compra }}
+                            <div class="input-group">
+                                <input type="text" 
+                                       name="data_compra_input" 
+                                       id="data_compra_input"
+                                       class="form-control" 
+                                       placeholder="dd/mm/aaaa"
+                                       required
+                                       maxlength="10">
+                                <button type="button" class="btn btn-outline-secondary" id="btnCalendario">
+                                    📅
+                                </button>
+                            </div>
+                            <input type="hidden" name="data_compra" id="data_compra">
                             {% if form.data_compra.errors %}
                             <div class="text-danger small mt-1">
                                 {% for error in form.data_compra.errors %}
@@ -32,7 +44,7 @@
                                 {% endfor %}
                             </div>
                             {% endif %}
-                            <div class="form-text">A data deve ser um dia útil anterior ao dia atual.</div>
+                            <div class="form-text">Digite a data no formato dd/mm/aaaa ou clique no calendário. Deve ser dia útil anterior ao atual.</div>
                         </div>
                         
                         <div class="mb-3">
@@ -61,4 +73,111 @@
         </div>
     </div>
 </div>
+
+<!-- Incluir jQuery e Datepicker -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.pt-BR.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    const dataInput = $('#data_compra_input');
+    const dataHidden = $('#data_compra');
+    const form = $('#compraForm');
+    const btnCalendario = $('#btnCalendario');
+
+    // Inicializar datepicker no input
+    dataInput.datepicker({
+        format: 'dd/mm/yyyy',
+        language: 'pt-BR',
+        autoclose: true,
+        todayHighlight: true,
+        endDate: new Date(new Date().setDate(new Date().getDate() - 1)), // Máximo: ontem
+        startDate: new Date('2020-01-01') // Mínimo: 2020
+    });
+
+    // Mostrar datepicker ao clicar no ícone do calendário
+    btnCalendario.click(function() {
+        dataInput.datepicker('show');
+    });
+
+    // Máscara de digitação manual (backup)
+    dataInput.on('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        
+        // Aplicar máscara dd/mm/aaaa
+        if (value.length >= 3 && value.length <= 4) {
+            value = value.substring(0, 2) + '/' + value.substring(2);
+        } else if (value.length >= 5) {
+            value = value.substring(0, 2) + '/' + value.substring(2, 4) + '/' + value.substring(4, 8);
+        }
+        
+        e.target.value = value;
+    });
+
+    // Validar e converter formato antes do envio
+    form.on('submit', function(e) {
+        const dateValue = dataInput.val().trim();
+        
+        // Validar formato dd/mm/aaaa
+        const dateRegex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+        if (!dateRegex.test(dateValue)) {
+            e.preventDefault();
+            alert('Por favor, insira uma data válida no formato dd/mm/aaaa');
+            dataInput.focus();
+            return;
+        }
+
+        const parts = dateValue.split('/');
+        const dia = parseInt(parts[0]);
+        const mes = parseInt(parts[1]);
+        const ano = parseInt(parts[2]);
+
+        // Validar se é uma data válida
+        const dataObj = new Date(ano, mes - 1, dia);
+        if (dataObj.getDate() !== dia || dataObj.getMonth() !== mes - 1 || dataObj.getFullYear() !== ano) {
+            e.preventDefault();
+            alert('Por favor, insira uma data válida');
+            dataInput.focus();
+            return;
+        }
+
+        // Validar se é data futura
+        const hoje = new Date();
+        hoje.setHours(0, 0, 0, 0);
+        if (dataObj >= hoje) {
+            e.preventDefault();
+            alert('A data da compra deve ser anterior ao dia atual');
+            dataInput.focus();
+            return;
+        }
+
+        // Converter para yyyy-mm-dd (formato do Django) e colocar no hidden
+        dataHidden.val(`${ano}-${mes.toString().padStart(2, '0')}-${dia.toString().padStart(2, '0')}`);
+    });
+
+    // Focar no campo de data ao carregar a página
+    dataInput.focus();
+});
+</script>
+
+<style>
+.datepicker {
+    z-index: 1051 !important;
+}
+.datepicker-dropdown {
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.datepicker table tr td.today {
+    background-color: #e6f7ff;
+}
+.datepicker table tr td.active.active {
+    background-color: #007bff;
+}
+.input-group-text {
+    cursor: pointer;
+}
+</style>
 {% endblock %}

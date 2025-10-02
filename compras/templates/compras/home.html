@@ -22,7 +22,7 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td>{{ ultima_cotacao|date:"d/m/Y H:i:s" }}</td>
+                                        <td>{{ ultima_cotacao|date:"d/m/Y H:i" }}</td>
                                         <td>R$ {{ compras.first.cotacao_usd_brl|floatformat:4|default:"0,0000" }}</td>
                                     </tr>
                                 </tbody>
@@ -57,7 +57,7 @@
                             <tbody>
                                 {% for compra in compras %}
                                 <tr>
-                                    <td>{{ compra.data_compra|date:"d/m/y" }}</td>
+                                    <td>{{ compra.data_compra|date:"d/m/Y" }}</td>
                                     <td>$ {{ compra.quantidade_usd|floatformat:2 }}</td>
                                     <td>R$ {{ compra.cotacao_usd_brl|floatformat:4 }}</td>
                                     <td>R$ {{ compra.valor_total_brl|floatformat:2 }}</td>

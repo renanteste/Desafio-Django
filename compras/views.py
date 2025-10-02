@@ -6,6 +6,7 @@ from .forms import CompraForm
 from .models import Compra
 from .services import BCBService
 from decimal import Decimal
+from datetime import date, timedelta
 
 def home(request):
     compras = Compra.objects.all().order_by('-data_compra')
@@ -66,4 +67,8 @@ def cadastrar_compra(request):
     else:
         form = CompraForm()
     
-    return render(request, 'compras/cadastrar_compra.html', {'form': form})
+    max_date = date.today() - timedelta(days=1)
+    return render(request, 'compras/cadastrar_compra.html', {
+        'form': form,
+        'max_date': max_date.isoformat()
+    })
